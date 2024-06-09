@@ -1,0 +1,8 @@
+Run Backend:
+
+npm run server
+
+Run Frontend:
+
+cd client
+npm start
