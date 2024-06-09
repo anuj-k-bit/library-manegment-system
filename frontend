@@ -1,0 +1,76 @@
+Setting Up the Frontend
+
+Initialize React App:
+npx create-react-app client
+cd client
+
+Install Dependencies:
+npm install axios
+
+Create Directory Structure:
+mkdir src/components src/services  
+
+Create Axios Service:
+
+// client/src/services/bookService.js
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api/books';
+
+export const getBooks = async () => {
+  return await axios.get(API_URL);
+};
+
+export const createBook = async (book) => {
+  return await axios.post(API_URL, book);
+};
+Create Book Component:
+
+
+// client/src/components/BookList.js
+import React, { useEffect, useState } from 'react';
+import { getBooks } from '../services/bookService';
+
+const BookList = () => {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const response = await getBooks();
+      setBooks(response.data);
+    };
+
+    fetchBooks();
+  }, []);
+
+  return (
+    <div>
+      <h1>Library Books</h1>
+      <ul>
+        {books.map(book => (
+          <li key={book._id}>{book.title} by {book.author}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default BookList;
+Create App Component:
+
+// client/src/App.js
+import React from 'react';
+import BookList from './components/BookList';
+
+const App = () => {
+  return (
+    <div className="App">
+      <BookList />
+    </div>
+  );
+};
+
+export default App;
+Run the React App:
+
+npm start
