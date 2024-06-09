@@ -1,0 +1,106 @@
+ Setting Up the Backend
+Initialize a Node.js Project:
+
+bash
+mkdir library-management-system
+cd library-management-system
+npm init -y
+Install Dependencies:
+
+bash
+npm install express mongoose cors dotenv
+npm install --save-dev nodemon
+Create Directory Structure:
+
+bash
+mkdir backend
+cd backend
+mkdir config models routes controllers
+Setup server.js:
+
+javascript
+// backend/server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
+
+// Routes
+app.use('/api/books', require('./routes/bookRoutes'));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+Create Book Model:
+
+javascript
+// backend/models/Book.js
+const mongoose = require('mongoose');
+
+const bookSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  publishedDate: { type: Date, required: true },
+  genre: { type: String, required: true },
+  available: { type: Boolean, default: true }
+});
+
+module.exports = mongoose.model('Book', bookSchema);
+Create Book Controller:
+
+javascript
+// backend/controllers/bookController.js
+const Book = require('../models/Book');
+
+exports.getAllBooks = async (req, res) => {
+  try {
+    const books = await Book.find();
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.createBook = async (req, res) => {
+  const book = new Book(req.body);
+  try {
+    const newBook = await book.save();
+    res.status(201).json(newBook);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+Create Book Routes:
+
+javascript
+// backend/routes/bookRoutes.js
+const express = require('express');
+const router = express.Router();
+const bookController = require('../controllers/bookController');
+
+router.get('/', bookController.getAllBooks);
+router.post('/', bookController.createBook);
+
+module.exports = router;
+Setup Environment Variables:
+
+plaintext
+// backend/.env
+MONGO_URI=your_mongo_connection_string
+Add Script to package.json:
+
+json
+"scripts": {
+  "start": "node backend/server.js",
+  "server": "nodemon backend/server.js"
+}
