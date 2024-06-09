@@ -1,0 +1,14 @@
+library-management-system/
+├── backend/
+│   ├── config/       # Configuration files
+│   ├── controllers/  # Controller logic
+│   ├── models/       # MongoDB models
+│   ├── routes/       # API routes
+│   ├── .env          # Environment variables
+│   └── server.js     # Main server file
+├── client/
+│   ├── public/       # Public assets
+│   ├── src/          # React components and services
+│   ├── .env          # Environment variables
+│   └── package.json  # Frontend dependencies
+└── README.md         # Project documentation
